@@ -1,6 +1,6 @@
 @tool
 extends FXBase
-class_name ChromaticAbberationFX
+class_name ChromaticAberrationFX
 
 @export var strength : float = 2.0:
 	set(value):
@@ -9,7 +9,7 @@ class_name ChromaticAbberationFX
 
 
 func _get_shader_code() -> String:
-	return load("res://addons/postfx/shaders/chromatic_abberation.gdshader").code
+	return load("res://addons/postfx/shaders/chromatic_aberration.gdshader").code
 
 func _update_shader() -> void:
 	properties["offset"] = strength
