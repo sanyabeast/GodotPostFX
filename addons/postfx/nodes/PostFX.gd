@@ -58,3 +58,25 @@ func _on_fx_changed(rect: ColorRect, fx: FXBase) -> void:
 	if mat is ShaderMaterial:
 		for key in fx.properties.keys():
 			mat.set_shader_parameter(key, fx.properties[key])
+
+func get_fx(type: StringName) -> FXBase:
+	for fx in effects:
+		if fx == null:
+			continue
+		var script := fx.get_script() as Script
+		if (script.resource_path.get_file() == type + ".gd") or (script.get_class() == type):
+			return fx
+	return null
+
+func set_fx_property(type:StringName, property: StringName, value) -> void:
+	var fx := get_fx(type)
+	if fx == null:
+		push_warning("Effect %s not found." % type)
+		return
+	
+	fx.set(property, value)
+	
+func toggle_fx(type: StringName, enable: bool) -> void:
+	var fx := get_fx(type)
+	if fx != null:
+		fx.enabled = enable
