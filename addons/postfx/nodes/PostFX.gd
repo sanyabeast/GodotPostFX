@@ -6,10 +6,17 @@ extends CanvasLayer
 		effects = value
 		_update_effects()
 
+@export var always_update : bool = false
+
 var color_rects : Array[ColorRect] = []
 
 func _ready() -> void:
 	_update_effects()
+
+func _process(_delta: float) -> void:
+	if !Engine.is_editor_hint():
+		if always_update:
+			_update_effects()
 
 func _update_effects() -> void:
 	for child in get_children():
@@ -50,8 +57,6 @@ func _on_fx_changed(rect: ColorRect, fx: FXBase) -> void:
 		return
 	
 	rect.visible = fx.enabled
-	print(str(rect.visible) + " RECT")
-	print(str(fx.enabled) + " FX")
 	
 	fx._update_shader()
 	var mat := rect.material
