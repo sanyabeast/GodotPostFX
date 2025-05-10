@@ -27,7 +27,7 @@ jobs:
       - name: Create a Git Tag
         id: create_tag
         run: |
-          TAG_NAME="dev/$(date + '%Y%m%d%H%M%S')"
+          TAG_NAME="dev/$(date +'%Y%m%d%H%M%S')"
           git tag $TAG_NAME
           echo "::set-output name=tag::$TAG_NAME"
 
