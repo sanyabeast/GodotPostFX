@@ -1,4 +1,4 @@
-name: Rolling Release
+name: dev Release
 
 on:
   push:
