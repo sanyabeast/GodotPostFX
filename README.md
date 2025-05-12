@@ -1,7 +1,25 @@
 # PostFX
-A Re-Write of my old PostProcess plugin.
 
-Works both in 3D and 2D.
+PostFX is a Shader Based Post Processing plugin for Godot 4.3+ (might work on older 4.x versions)
+
+---
+
+### 🏁 Usage:
+
+| Download from the AssetLib |
+|-----------|
+| ![image](https://github.com/user-attachments/assets/c6e5ec4f-4c9f-4eff-a608-fbad250f8cec) |
+
+| Enable in Project Settings > Plugins |
+|-----------|
+| ![image](https://github.com/user-attachments/assets/b0ae2119-888e-4e68-97e8-b50f57c017a6) |
+
+
+| And finally add to scene |
+|-----------|
+| ![image](https://github.com/user-attachments/assets/932db706-60c8-43f4-89f4-7eb7f6287cfe) |
+
+(Currently preview only works on 2D scenes.)
 
 ---
 
@@ -17,12 +35,12 @@ Works both in 3D and 2D.
 
 | Available Effects |
 |------------|
-| ![Available Effects](https://github.com/user-attachments/assets/a8af53cf-9b68-4ef1-9039-3f513c470790) |
+| ![image](https://github.com/user-attachments/assets/5e1e1d59-f036-45b2-9299-87f90f8169bc) |
 
 ---
 
 
-### 🔥 PostFX - Available Effects Overview
+### 🔥 PostFX - Available Effects Overview (will be updated soon)
 
 | Effect Name             | Preview                                                                                       | Properties                                                                                  |
 |-------------------------|-----------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|
