@@ -1,5 +1,6 @@
 @tool
 extends CanvasLayer
+class_name PostFX
 
 @export var effects : Array[FXBase] = []:
 	set(value):
@@ -47,6 +48,9 @@ func _update_effects() -> void:
 		
 		#rect.visible = fx.enabled
 		rect.material = mat
+		
+		if not Engine.is_editor_hint():
+			_on_fx_changed(rect, fx)
 		
 		if fx.is_connected("changed", Callable(self, "_on_fx_changed")):
 			fx.disconnect("changed", Callable(self, "_on_fx_changed"))
