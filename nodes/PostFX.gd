@@ -6,43 +6,54 @@ class_name PostFX
 	set(value):
 		if effects != value:
 			effects = value
-			_schedule_effects_update()
+			_update_effects()
+		update_configuration_warnings()
 
-@export var always_update: bool = false
 @export var debug_mode: bool = false
 
 var _color_rects: Array[ColorRect] = []
 var _fx_rects: Dictionary = {}
 var _fx_map: Dictionary = {}
 var _material_cache: Dictionary = {}
-var _update_scheduled: bool = false
 var _connected_signals: Array[Callable] = []
 
 func _ready() -> void:
-	_initialize_node_properties()
-	_schedule_effects_update()
+	if Engine.is_editor_hint():
+		update_configuration_warnings()
 
-func _process(_delta: float) -> void:
-	if not Engine.is_editor_hint() and always_update:
-		_schedule_effects_update()
-	
-	if _update_scheduled:
-		_update_scheduled = false
-		_update_effects_internal()
+	_initialize_node_properties()
+	_update_effects()
 
 func _exit_tree() -> void:
 	_cleanup_resources()
+
+func _get_configuration_warnings():
+	var warnings: Array[String] = []
+	var seen_types: Dictionary = {}
+	var null_count = 0
+	
+	for fx in effects:
+		if fx == null:
+			null_count += 1
+			continue
+		
+		var effect_name = fx._get_name()
+		if seen_types.has(effect_name):
+			warnings.append("Duplicate effect type: '%s'" % effect_name)
+		else:
+			seen_types[effect_name] = true
+	
+	if null_count > 0:
+		warnings.append("Found %d null effect(s)" % null_count)
+	
+	return warnings
 
 func _initialize_node_properties() -> void:
 	z_index = -1
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 
-func _schedule_effects_update() -> void:
-	if not _update_scheduled:
-		_update_scheduled = true
-
-func _update_effects_internal() -> void:
+func _update_effects() -> void:
 	if debug_mode:
 		print("[PostFX] Updating %d effects" % effects.size())
 	
@@ -211,16 +222,25 @@ func add_effect(fx: FXBase) -> void:
 		push_warning("[PostFX] Cannot add null effect")
 		return
 	
-	if fx in effects:
-		if debug_mode:
-			print("[PostFX] Effect '%s' already exists" % fx._get_name())
+	var effect_name = fx._get_name()
+	if effect_name.is_empty():
+		push_warning("[PostFX] Cannot add effect with empty name: %s" % fx)
 		return
 	
+	# Check if effect type already exists
+	for existing_fx in effects:
+		if existing_fx != null and existing_fx._get_name() == effect_name:
+			if debug_mode or Engine.is_editor_hint():
+				push_warning("[PostFX] Effect type '%s' already exists, cannot add duplicate" % effect_name)
+			return
+	
 	effects.append(fx)
-	_schedule_effects_update()
+	_update_effects()
+	if Engine.is_editor_hint():
+		update_configuration_warnings()
 	
 	if debug_mode:
-		print("[PostFX] Added effect: %s" % fx._get_name())
+		print("[PostFX] Added effect: %s" % effect_name)
 
 func remove_effect(type: StringName) -> bool:
 	var fx := get_fx(type)
@@ -230,7 +250,9 @@ func remove_effect(type: StringName) -> bool:
 	var index := effects.find(fx)
 	if index >= 0:
 		effects.remove_at(index)
-		_schedule_effects_update()
+		_update_effects()
+		if Engine.is_editor_hint():
+			update_configuration_warnings()
 		
 		if debug_mode:
 			print("[PostFX] Removed effect: %s" % type)
@@ -247,7 +269,7 @@ func get_active_effects() -> Array[StringName]:
 	return active_effects
 
 func force_update() -> void:
-	_update_effects_internal()
+	_update_effects()
 	
 	if debug_mode:
 		print("[PostFX] Forced effects update")
