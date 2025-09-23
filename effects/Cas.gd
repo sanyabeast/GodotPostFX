@@ -36,3 +36,6 @@ func _update_shader() -> void:
 	properties["sharpness"] = sharpness
 	properties["edge_boost"] = edge_boost
 	properties["use_diagonal_sampling"] = use_diagonal_sampling
+
+func _get_name() -> String:
+	return "cas"

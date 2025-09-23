@@ -1,4 +1,5 @@
 @tool
+@abstract
 extends Resource
 class_name FXBase
 
@@ -10,12 +11,14 @@ class_name FXBase
 
 var properties : Dictionary
 
-func _get_shader_code() -> String:
-	push_error("NO SHADER CODE PROVIDED.")
-	return ""
-
-func _update_shader() -> void:
-	pass
-
 func notify_change():
 	changed.emit()
+
+@abstract
+func _get_name() -> String;
+
+@abstract
+func _get_shader_code() -> String;
+
+@abstract
+func _update_shader() -> void;

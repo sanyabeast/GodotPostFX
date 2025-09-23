@@ -14,3 +14,6 @@ func _get_shader_code() -> String:
 func _update_shader() -> void:
 	properties["ascii_tex"] = preload("res://addons/postfx/assets/ascii.png")
 	properties["ascii_size"] = Vector2(8.0, 16.0) * size
+
+func _get_name() -> String:
+	return "ascii"

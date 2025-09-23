@@ -1,6 +1,6 @@
 @tool
 extends FXBase
-class_name VignetteFX
+class_name UnderwaterFX
 
 @export_range(0, 2, 0.01) var intensity : float = 1.0:
 	set(value):
@@ -18,7 +18,7 @@ class_name VignetteFX
 		notify_change()
 
 func _get_shader_code() -> String:
-	return load("res://addons/postfx/shaders/vignette.gdshader").code
+	return load("res://addons/postfx/shaders/underwater.gdshader").code
 
 func _update_shader() -> void:
 	properties["vignette_intensity"] = intensity
@@ -26,4 +26,4 @@ func _update_shader() -> void:
 	properties["vignette_rgb"] = color
 
 func _get_name() -> String:
-	return "vignette"
+	return "underwater"

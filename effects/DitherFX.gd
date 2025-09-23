@@ -7,3 +7,6 @@ func _get_shader_code() -> String:
 
 func _update_shader() -> void:
 	pass
+
+func _get_name() -> String:
+	return "dither"

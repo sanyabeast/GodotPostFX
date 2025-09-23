@@ -59,3 +59,6 @@ func _update_shader() -> void:
 	properties["sourceOffset"] = source_offset
 	properties["sourceScale"] = source_scale
 	properties["sourceAngle"] = source_angle
+
+func _get_name() -> String:
+	return "kaleidoscope"

@@ -24,3 +24,6 @@ func _update_shader() -> void:
 	properties["tint"] = tint
 	properties["brightness"] = brightness
 	properties["saturation"] = saturation
+
+func _get_name() -> String:
+	return "color_correction"

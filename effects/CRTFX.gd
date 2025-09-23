@@ -146,3 +146,6 @@ func _update_shader() -> void:
 	properties["clip_warp"] = clip_warp
 	properties["vignette_intensity"] = vignette_intensity
 	properties["vignette_opacity"] = vignette_opacity
+
+func _get_name() -> String:
+	return "crt"

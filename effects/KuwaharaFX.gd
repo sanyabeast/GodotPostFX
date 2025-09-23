@@ -47,3 +47,6 @@ func _update_shader() -> void:
 	# Advanced Tuning
 	properties["_ZeroCrossing"] = zero_crossing
 	properties["_Zeta"] = zeta
+
+func _get_name() -> String:
+	return "kuwahara"

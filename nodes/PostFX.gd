@@ -1,5 +1,5 @@
 @tool
-extends CanvasLayer
+extends Control
 class_name PostFX
 
 @export var effects : Array[FXBase] = []:
@@ -10,8 +10,13 @@ class_name PostFX
 @export var always_update : bool = false
 
 var color_rects : Array[ColorRect] = []
+var fx_rects : Dictionary = {}
+var fx_map : Dictionary = {}
 
 func _ready() -> void:
+	z_index = -1
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_update_effects()
 
 func _process(_delta: float) -> void:
@@ -25,8 +30,9 @@ func _update_effects() -> void:
 	color_rects.clear()
 	
 	for i in range(effects.size()):
-		var fx = effects[i]
-		if fx == null or not fx.enabled:
+		var fx := effects[i]
+		
+		if fx == null:
 			continue
 		
 		var rect := ColorRect.new()
@@ -34,6 +40,7 @@ func _update_effects() -> void:
 		rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 		var canvas_layer := CanvasLayer.new()
+		canvas_layer.layer = 0
 		add_child(canvas_layer)
 		canvas_layer.add_child(rect)
 		color_rects.append(rect)
@@ -46,8 +53,11 @@ func _update_effects() -> void:
 		for key in fx.properties.keys():
 			mat.set_shader_parameter(key, fx.properties[key])
 		
-		#rect.visible = fx.enabled
+		rect.visible = fx.enabled
 		rect.material = mat
+
+		fx_rects[fx._get_name()] = rect
+		fx_map[fx._get_name()] = fx
 		
 		if not Engine.is_editor_hint():
 			_on_fx_changed(rect, fx)
@@ -69,13 +79,10 @@ func _on_fx_changed(rect: ColorRect, fx: FXBase) -> void:
 			mat.set_shader_parameter(key, fx.properties[key])
 
 func get_fx(type: StringName) -> FXBase:
-	for fx in effects:
-		if fx == null:
-			continue
-		var script := fx.get_script() as Script
-		if (script.resource_path.get_file() == type + ".gd") or (script.get_class() == type):
-			return fx
-	return null
+	if not fx_map.has(type):
+		print("Effect %s not found." % type)
+		return null
+	return fx_map[type]
 
 func set_fx_property(type:StringName, property: StringName, value) -> void:
 	var fx := get_fx(type)
@@ -87,5 +94,11 @@ func set_fx_property(type:StringName, property: StringName, value) -> void:
 	
 func toggle_fx(type: StringName, enable: bool) -> void:
 	var fx := get_fx(type)
+	print("Toggle fx %s to %s" % [type, enable])
 	if fx != null:
+		print("FX found")
 		fx.enabled = enable
+		if fx_rects.has(fx._get_name()):
+			print("FX rect found")
+			fx_rects[fx._get_name()].visible = enable
+			
