@@ -16,15 +16,7 @@ uniform float tint_strength : hint_range(0.0, 1.0) = 0.3;
 uniform float brightness : hint_range(0.0, 2.0) = 0.8;
 uniform float contrast : hint_range(0.0, 2.0) = 1.1;
 
-// Caustics effect
-uniform bool enable_caustics = true;
-uniform float caustic_strength : hint_range(0.0, 1.0) = 0.15;
-uniform float caustic_scale : hint_range(0.1, 5.0) = 3.0;
-uniform float caustic_speed : hint_range(0.0, 2.0) = 0.4;
-
-// Depth-based effects
-uniform bool enable_depth_fade = true;
-uniform float depth_fade_distance : hint_range(0.0, 2.0) = 1.0;
+// Removed caustics and depth fade for performance optimization
 
 // Zoom factor to avoid edge sampling issues
 uniform float zoom_factor : hint_range(1.0, 1.2) = 1.05;
@@ -51,17 +43,11 @@ float noise(vec2 st) {
                    dot(random2(i + vec2(1.0, 1.0)), f - vec2(1.0, 1.0)), u.x), u.y);
 }
 
-// Fractal noise for more complex patterns
-float fbm(vec2 st) {
+// Simplified noise for better performance
+float simple_fbm(vec2 st) {
     float value = 0.0;
-    float amplitude = 0.5;
-    float frequency = 1.0;
-    
-    for (int i = 0; i < 4; i++) {
-        value += amplitude * noise(st * frequency);
-        frequency *= 2.0;
-        amplitude *= 0.5;
-    }
+    value += 0.5 * noise(st);
+    value += 0.25 * noise(st * 2.0);
     return value;
 }
 
@@ -82,9 +68,9 @@ void fragment() {
         vec4 noise2 = texture(noise_texture, wave_uv * noise_scale * 0.7 + vec2(0.0, time_offset * 0.2));
         distortion = (noise1.xy + noise2.xy - 1.0) * distortion_strength;
     } else {
-        // Procedural noise distortion - properly centered around 0
-        float noise1 = fbm(wave_uv * noise_scale + vec2(time_offset, 0.0)) - 0.5;
-        float noise2 = fbm(wave_uv * noise_scale * 1.3 + vec2(0.0, time_offset * 0.8)) - 0.5;
+        // Simplified procedural noise distortion
+        float noise1 = simple_fbm(wave_uv * noise_scale + vec2(time_offset, 0.0)) - 0.5;
+        float noise2 = simple_fbm(wave_uv * noise_scale * 1.3 + vec2(0.0, time_offset * 0.8)) - 0.5;
         distortion = vec2(noise1, noise2) * distortion_strength * 2.0;
     }
     
@@ -114,22 +100,7 @@ void fragment() {
     screen_color.rgb = mix(screen_color.rgb, screen_color.rgb * underwater_tint, tint_strength);
     screen_color.rgb = ((screen_color.rgb - 0.5) * contrast + 0.5) * brightness;
     
-    // Add caustics effect
-    if (enable_caustics) {
-        vec2 caustic_uv = UV * caustic_scale + TIME * caustic_speed * vec2(0.3, 0.1);
-        float caustic_noise1 = fbm(caustic_uv);
-        float caustic_noise2 = fbm(caustic_uv * 1.7 + vec2(0.3, 0.2));
-        float caustics = max(0.0, caustic_noise1 * caustic_noise2);
-        caustics = pow(caustics, 2.0) * caustic_strength;
-        screen_color.rgb += vec3(caustics * 0.8, caustics, caustics * 0.6);
-    }
-    
-    // Depth-based fade effect
-    if (enable_depth_fade) {
-        float depth_factor = smoothstep(0.0, depth_fade_distance, UV.y);
-        screen_color.rgb = mix(screen_color.rgb, screen_color.rgb * underwater_tint, depth_factor * 0.4);
-        screen_color.rgb *= mix(1.0, 0.6, depth_factor);
-    }
+    // Removed caustics and depth fade effects for better performance
     
     COLOR = screen_color;
 }

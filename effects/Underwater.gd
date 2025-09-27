@@ -42,25 +42,7 @@ class_name UnderwaterFX
 		contrast = value
 		notify_change()	
 
-@export_range(0, 1, 0.01) var caustic_strength : float = 0.15:
-	set(value):
-		caustic_strength = value
-		notify_change()	
-
-@export_range(0, 5, 0.01) var caustic_scale : float = 3.0:
-	set(value):
-		caustic_scale = value
-		notify_change()	
-
-@export_range(0, 2, 0.01) var caustic_speed : float = 0.4:
-	set(value):
-		caustic_speed = value
-		notify_change()	
-
-@export_range(0, 1, 0.01) var depth_fade_distance : float = 1.0:
-	set(value):
-		depth_fade_distance = value
-		notify_change()	
+# Removed caustic and depth fade properties for performance optimization
 
 @export_range(1, 2, 0.01) var zoom_factor : float = 1.05:
 	set(value):
@@ -94,10 +76,7 @@ func _update_shader() -> void:
 	properties["tint_strength"] = tint_strength
 	properties["brightness"] = brightness
 	properties["contrast"] = contrast
-	properties["caustic_strength"] = caustic_strength
-	properties["caustic_scale"] = caustic_scale
-	properties["caustic_speed"] = caustic_speed
-	properties["depth_fade_distance"] = depth_fade_distance
+	# Removed caustic and depth fade properties
 	properties["zoom_factor"] = zoom_factor
 	properties["micro_distortion_strength"] = micro_distortion_strength
 	properties["micro_frequency"] = micro_frequency
